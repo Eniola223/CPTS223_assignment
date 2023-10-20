@@ -1,0 +1,65 @@
+#include <map>
+#include "twitterdata.hpp"
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+    // Schema: UserName,Last,First,Email,NumTweets,MostViewedCategory
+    string raw_data[5][6] = { {"rangerPower", "Smit", "Rick", "smitRick@gmail.com", "1117", "power lifting"},
+                             {"kittyKat72", "Smith", "Kathryn", "kat@gmail.com", "56", "health"},
+                             {"lexi5", "Anderson", "Alexis", "lexi5@gmail.com", "900", "education"},
+                             {"savage1", "Savage", "Ken", "ksavage@gmail.com", "17", "president"},
+                             {"smithMan", "Smith", "Rick", "rick@hotmail.com", "77", "olympics"} };
+    TwitterData* twitter_data = new TwitterData[5];
+    for (int i = 0; i < 5; ++i)
+    {
+        twitter_data[i].setUserName(raw_data[i][0]);
+        twitter_data[i].setActualName(raw_data[i][2] + " " + raw_data[i][1]);
+        twitter_data[i].setEmail(raw_data[i][3]);
+        twitter_data[i].setNumTweets(stoi(raw_data[i][4]));
+        twitter_data[i].setCategory(raw_data[i][5]);
+    }
+    // search based on User Name
+    map<string, TwitterData> TwitterMap;
+    for(int i = 0; i < 5; ++i) {
+        TwitterMap[twitter_data[i].getUserName()] = twitter_data[i];
+        // intializing with raw date from the string
+    }
+    
+    for (const auto& entry : TwitterMap) {
+        cout << "Username: " << entry.first << endl;
+    }
+        string TargetUsername = "savage1";
+        auto itUsername = TwitterMap.find(TargetUsername);
+        if (itUsername != TwitterMap.end()) {
+            TwitterData& userData = itUsername->second;
+            cout << "Username:  " << userData.getUserName() << endl;
+        }
+        else {
+            cout << "User not found:  " << TargetUsername << endl;
+        }
+
+        // searched based on EmailAddress
+        map<string, TwitterData> TwitterMapbyEmail;
+        for(int i = 0; i < 5; ++i) {
+
+            TwitterMapbyEmail[twitter_data[i].getEmail()] = twitter_data[i];
+            // intializing with raw date from the string
+        }
+
+        for (const auto& entry : TwitterMapbyEmail) {
+            cout << "Email: " << entry.first << " , Username: "<<entry.second.getUserName() << endl;
+        }
+        string TargetEmail = "kat@gmail.com";
+        auto itEmail = TwitterMapbyEmail.find(TargetEmail);
+        if (itEmail != TwitterMapbyEmail.end()) {
+            TwitterData& userDataEmail = itEmail->second;
+            cout << " User with email " << TargetEmail << " found. "<< endl;
+        }
+        else {
+            cout << "User with email " << TargetEmail << " not found." <<endl;
+        }
+        delete[] twitter_data;
+
+        return 0;
+}
